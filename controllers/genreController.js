@@ -102,13 +102,50 @@ exports.genre_create_post =  [
 ];
 
 // Display Genre delete form on GET.
-exports.genre_delete_get = (req, res) => {
-    res.send('NOT IMPLEMENTED: Genre delete GET')
+exports.genre_delete_get = (req, res, next) => {
+    
+    async.parallel({
+        genre: callback => {
+            Genre.findById(req.params.id)
+            .exec(callback)
+        },
+        books: callback => {
+            Book.find({'genre': req.params.id})
+            .exec(callback)
+        }
+    }, (err, results) => {
+        if (err) return next(err)
+        if (results.genre == null) return res.redirect('./catalog/genres')
+
+        res.render('genre_delete', {title: 'Delete Genre', genre: results.genre, books: results.books})
+    })
+
 }
 
 // Handle Genre delete on POST.
-exports.genre_delete_post = (req, res) => {
-    res.send('NOT IMPLEMENTED: Genre delete POST')
+exports.genre_delete_post = (req, res, next) => {
+    
+    async.parallel({
+        genre: callback => {
+            Genre.findById(req.params.id)
+            .exec(callback)
+        },
+        books: callback => {
+            Book.find({'genre': req.params.id})
+            .exec(callback)
+        }
+    }, (err, results) => {
+        if (err) return next(err)
+        if (results.books.length > 0) return res.render('genre_delete', {title: 'Delete Genre', genre: results.genre, books: results.books})
+
+        Genre.findByIdAndRemove(req.params.id)
+        .exec(err => {
+            if (err) return next(err)
+            // Success - go to genres list
+            res.redirect('/catalog/genres')
+        })
+    })
+
 }
 
 // Display Genre update form on GET.
