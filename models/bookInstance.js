@@ -24,4 +24,13 @@ BookInstanceSchema.virtual('due_back_formatted').get(function() {
     return moment(this.due_back).format('MMMM Do, YYYY')
 })
 
+// Virtual for form
+BookInstanceSchema.virtual('due_back_form').get(function() {
+    const date = this.due_back
+    let year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate()
+    if (month.toString().length == 1) month = '0' + month
+    if (day.toString().length == 1) day = '0' + day
+    return `${year}-${month}-${day}`
+})
+
 module.exports = mongoose.model('BookInstance', BookInstanceSchema)

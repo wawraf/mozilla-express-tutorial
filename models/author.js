@@ -40,4 +40,23 @@ AuthorSchema.virtual('date_of_death_formatted').get(function() {
     return this.date_of_death ? moment(this.date_of_death).format('D MMMM YYYY') : ''
 })
 
+// Virtual for author's birth and death dates
+AuthorSchema.virtual('date_of_birth_form').get(function() {
+    const date = this.date_of_birth
+    let year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate()
+    if (month.toString().length == 1) month = '0' + month
+    if (day.toString().length == 1) day = '0' + day
+    return `${year}-${month}-${day}`
+})
+
+AuthorSchema.virtual('date_of_death_form').get(function() {
+    if (this.date_of_death) {
+        const date = this.date_of_death
+        let year = date.getFullYear(), month = date.getMonth() + 1, day = date.getDate()
+        if (month.toString().length == 1) month = '0' + month
+        if (day.toString().length == 1) day = '0' + day
+        return `${year}-${month}-${day}`
+    } else return undefined
+})
+
 module.exports = mongoose.model('Author', AuthorSchema)
