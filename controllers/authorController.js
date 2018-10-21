@@ -1,6 +1,8 @@
 const Author = require('../models/author')
 const Book = require('../models/book')
 
+const debug = require('debug')('author')
+
 const async = require('async')
 const { body,validationResult } = require('express-validator/check')
 const { sanitizeBody } = require('express-validator/filter')
@@ -156,7 +158,10 @@ exports.author_update_get = (req, res, next) => {
             Author.findById(req.params.id).exec(callback)
         }
     }, (err, results) => {
-        if (err) return next(err)
+        if (err) {
+            debug('Update error: ' + err)
+            return next(err)
+        }
         if (results.author==null) { // No results.
             var err = new Error('Book Instance not found');
             err.status = 404;
