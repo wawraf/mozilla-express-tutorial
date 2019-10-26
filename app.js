@@ -52,4 +52,26 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+var jStat = require('./controllers/jStat')
+
+console.log('Correlation')
+let wiek = [4, 6, 3, 5, 1.5, 1.5] //[45, 78, 24, 51, 13, 13] //[18, 18, 21, 19, 16, 17]
+let waga = [1, 3, 3, 3, 6, 5] //[23, 25, 25, 25, 34, 30] //[78, 77, 98, 110, 80, 69]
+
+pearson = jStat.corrcoeff(wiek, waga)
+spearman = jStat.spearmancoeff(wiek, waga)
+
+console.log('Pearson: ' + pearson.toFixed(3))
+console.log('Spearman: ' + spearman.toFixed(3))
+
+t_pearson = pearson * Math.sqrt(wiek.length - 2) / Math.sqrt(1 - pearson**2) 
+t_spearman = spearman * Math.sqrt(wiek.length - 2) / Math.sqrt(1 - spearman**2) 
+
+console.log('T-score (Pearson): ' + t_pearson.toFixed(2))
+console.log('T-score (Spearman): ' + t_spearman.toFixed(2))
+
+console.log('P-value (Pearson): ' + (jStat.studentt.cdf(-Math.abs(t_pearson), wiek.length - 2) * 2).toFixed(3))
+console.log('P-value (Spearman): ' + (jStat.studentt.cdf(-Math.abs(t_spearman), wiek.length - 2) * 2).toFixed(3))
+
+
 module.exports = app;
